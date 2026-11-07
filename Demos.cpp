@@ -331,6 +331,8 @@ void TestBinaryTree(TreeContainer &tree, const string &filename) {
     // Pruebas de insercion y persistencia
     //InsertElements(tree, {{50, 5}, {20, 2}, {80, 8}, {10, 1}, {30, 3}, {70, 7}, {90, 9}});
     InsertElements(tree, {{40, 6}, {20, 2}, {10, 1}, {25, 4}, {30, 5}, {22, 3}, {50, 7}});
+    //InsertElements(tree, {{40, 6}, {20, 2}, {10, 1}, {50, 4}});
+    //InsertElements(tree, {{10, 6}, {20, 2}, {40, 1}});
     TestContainer(tree, filename);
     // Recorrido in-order
     TestTraversal(tree);
@@ -386,17 +388,22 @@ void TestBinaryTree(TreeContainer &tree, const string &filename) {
     cout << endl;
 
     tree.remove(41);
-    cout << "Remover 41\n";
+    cout << "Remover 41\n\n";
     print_tree(tree);
     cout << endl;
 
     tree.remove(31);
-    cout << "Remover 31\n";
+    cout << "Remover 31\n\n";
     print_tree(tree);
     cout << endl;
 
     tree.remove(51);
-    cout << "Remover 51\n";
+    cout << "Remover 51\n\n";
+    print_tree(tree);
+    cout << endl;
+
+    tree.remove(61);
+    cout << "Remover 61\n\n";
     print_tree(tree);
     cout << endl;
 
@@ -412,6 +419,11 @@ void TestBinaryTree(TreeContainer &tree, const string &filename) {
 
     tree = new_tree;
     cout << "Arbol tras operator=: " << tree << endl;
+
+    cout << "\n\n";
+    print_tree(tree);
+    cout << endl;
+
 }
 
 void DemoBinaryTree() {
@@ -423,7 +435,7 @@ void DemoBinaryTree() {
 
 void DemoAVLTree() {
     cout << "\n";
-    PrintColored(cout, "Pruebas para BinaryTree", Color::Yellow);
+    PrintColored(cout, "Pruebas para AVLTree", Color::Yellow);
     AVL_Tree<BinaryTreeAscTraits<TX>> avltree;
     TestBinaryTree(avltree, "binarytree.txt");
 }

@@ -157,8 +157,6 @@ public:
 
 protected:
     using Parent::m_mutex;
-
-private:
     NodePtr m_root = nullptr; // root of the binary tree
     void internal_insert(NodePtr& node, const value_type& value, Ref ref, NodePtr parent = nullptr);
     NodePtr extremeLeafNode(NodePtr nodeptr, TX _Dir) const {
@@ -312,7 +310,9 @@ auto BaseBinaryTree<Traits, Mixins...>::remove(value_type val) -> Node {
     if (!nodeFound) return nullNode;
     auto hasLeftChild = nodeFound->m_pChild[0] != nullptr;
     auto hasRightChild = nodeFound->m_pChild[1] != nullptr;
-    if (hasRightChild && hasRightChild) {
+    //cout << "AQUI10\n";
+    if (hasLeftChild && hasRightChild) {
+        //cout << "AQUI11\n";
         auto newNode = extremeLeafNode(nodeFound->m_pChild[0], 1); //Supremo de menores a valor
         std::swap(nodeFound->value(), newNode->value());
         std::swap(nodeFound->ref(), newNode->ref());
@@ -320,15 +320,23 @@ auto BaseBinaryTree<Traits, Mixins...>::remove(value_type val) -> Node {
         hasLeftChild = nodeFound->m_pChild[0] != nullptr;
         hasRightChild = nodeFound->m_pChild[1] != nullptr;
     }
+    //cout << "AQUI13\n";
     auto parent = nodeFound->m_parent;
-    auto dir = nodeFound == parent->m_pChild[1];
-    if (hasLeftChild != hasRightChild) {
-        //auto dir = nodeFound == parent->m_pChild[1];
-        parent->m_pChild[dir] = nodeFound->m_pChild[hasRightChild];
-        parent->m_pChild[dir]->m_parent = parent;
-    }
-    else {
+    //if (hasLeftChild != hasRightChild) {
+        if (nodeFound->m_pChild[hasRightChild]) nodeFound->m_pChild[hasRightChild]->m_parent = parent;
+        if (nodeFound == m_root) m_root = nodeFound->m_pChild[hasRightChild];
+        if (parent) {
+            auto dir = nodeFound == parent->m_pChild[1];
+            parent->m_pChild[dir] = nodeFound->m_pChild[hasRightChild];
+        }
+        //}
+    /*else {
         parent->m_pChild[dir] = nullptr;
+        }*/
+    //cout << "AQUI15\n";
+    while (parent) {
+        Redistribution(parent);
+        parent = parent->m_parent;
     }
     nodeFound->m_parent = nullptr;
     nodeFound->m_pChild[0] = nullptr;
@@ -339,7 +347,7 @@ auto BaseBinaryTree<Traits, Mixins...>::remove(value_type val) -> Node {
 template <typename Traits, template <typename> typename... Mixins>
 auto BaseBinaryTree<Traits, Mixins...>::height(NodePtr nodeptr) -> TX {
     if (!nodeptr) return 0;
-    return 1 + std::max(height(nodeptr->m_pChild[0]), height(nodeptr->m_pChild[0]));
+    return 1 + std::max(height(nodeptr->m_pChild[0]), height(nodeptr->m_pChild[1]));
 }
 
 template <typename Iterator>

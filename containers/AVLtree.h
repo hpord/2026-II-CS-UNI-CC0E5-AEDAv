@@ -22,18 +22,32 @@ public:
 
 template <typename Traits>
 void AVL_Tree<Traits>::rotate(NodePtr nodeptr, TX Dir) {
+    if (!nodeptr) return;
     auto newNodePtr = nodeptr->m_pChild[1-Dir];
-    //if (!newNodePtr) return nodeptr;
+    if (!newNodePtr) return;
 
     auto tmp = newNodePtr->m_pChild[Dir];
+    auto parent = nodeptr->m_parent;
 
+    //nuevo nodo raiz del subarbol
     newNodePtr->m_pChild[Dir] = nodeptr;
-    nodeptr->m_pChild[1-Dir] = tmp;
+    newNodePtr->m_parent = parent;
 
-    newNodePtr->m_parent = nodeptr->m_parent;
+    //Nodo raiz inicial del subarbol
+    nodeptr->m_pChild[1-Dir] = tmp;
     nodeptr->m_parent = newNodePtr;
 
+    //Nodo padre
+    if (parent) {
+        auto dirParentChild = nodeptr == parent->m_pChild[1];
+        parent->m_pChild[dirParentChild] = newNodePtr;
+    }
+
+    //Nodo tmp
     if (tmp) tmp->m_parent = nodeptr;
+
+    //Verificar root
+    if (Parent::m_root == nodeptr) Parent::m_root = newNodePtr;
 
     nodeptr->m_height = Parent::height(nodeptr);
     newNodePtr->m_height = Parent::height(newNodePtr);
@@ -47,12 +61,12 @@ TX AVL_Tree<Traits>::balance(NodePtr nodeptr) {
 
 template <typename Traits>
 void AVL_Tree<Traits>::Redistribution(NodePtr nodeptr) {
-    cout << nodeptr->getValue() << "  " << balance(nodeptr) << "\n";
+    //cout << nodeptr->getValue() << "  " << balance(nodeptr) << "\n";
     if (std::abs(balance(nodeptr)) > 1) {
         auto childNodePtr = nodeptr->m_pChild[balance(nodeptr)<0];
         //cout << "AQUI05\n";
         if (balance(nodeptr) * balance(childNodePtr) < 0) {
-            rotate(childNodePtr, balance(childNodePtr)<0);
+            rotate(childNodePtr, balance(childNodePtr)>0);
         }
         rotate(nodeptr, balance(nodeptr)>0);
     }
