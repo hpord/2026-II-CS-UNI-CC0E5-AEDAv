@@ -12,6 +12,7 @@
 #include "containers/Heap.h"
 #include "containers/binarytree.h"
 #include "containers/AVLtree.h"
+#include "containers/hashtable.h"
 #include "utilities/printcolored.h"
 #include "Demos.h"
 using namespace std;
