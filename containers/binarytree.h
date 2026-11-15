@@ -295,8 +295,10 @@ template <typename Traits, template <typename> typename... Mixins>
 auto BaseBinaryTree<Traits, Mixins...>::findNodePtr(value_type val) -> NodePtr {
     auto current = m_root;
     while (current) {
-        if(current->getValue() == val) return current;
-        current = current->m_pChild[current->getValue() < val];
+        auto branch = Compare()(current->getValue(), val);
+        // Equivalente si no es menor ni mayor según el comparador del árbol.
+        if (!branch && !Compare()(val, current->getValue())) return current;
+        current = current->m_pChild[branch];
     }
     return current;
 }
@@ -338,10 +340,9 @@ auto BaseBinaryTree<Traits, Mixins...>::remove(value_type val) -> Node {
         Redistribution(parent);
         parent = parent->m_parent;
     }
-    nodeFound->m_parent = nullptr;
-    nodeFound->m_pChild[0] = nullptr;
-    nodeFound->m_pChild[1] = nullptr;
-    return *nodeFound;
+    Node removed = *nodeFound;
+    delete nodeFound;
+    return removed;
 }
 
 template <typename Traits, template <typename> typename... Mixins>

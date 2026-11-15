@@ -440,3 +440,59 @@ void DemoAVLTree() {
     AVL_Tree<BinaryTreeAscTraits<TX>> avltree;
     TestBinaryTree(avltree, "binarytree.txt");
 }
+
+void DemoHashTable() {
+    cout << "\n";
+    PrintColored(cout, "Pruebas para HashTable (buckets AVL)", Color::Yellow);
+    ofstream("hashtable.txt", ios::trunc).close();
+
+    // Insercion de elementos; la tabla crece sola al superar el load factor.
+    HashTable<HashTableAscTraits<TX>> table;
+    InsertElements(table, {{40, 6}, {15, 2}, {70, 7}, {25, 4}, {55, 5}, {22, 3}, {50, 8}, {10, 1}, {30, 9}});
+
+    // Capacidad pequena a proposito para que se vean las colisiones:
+    // cada bucket es un AVL y guarda sus nodos ordenados.
+    table.rehash(7);
+
+    TestContainer(table, "hashtable.txt");
+
+    // Recorridos: como el orden depende de los buckets (no es globalmente
+    // ordenado como en un arbol), no usamos TestTraversal, cuyo FirstThat
+    // asume que el primer elemento es el minimo.
+    cout << "Forward traversal:  [";
+    table.call(PrintNode<typename HashTable<HashTableAscTraits<TX>>::Node>, cout);
+    cout << "]" << endl;
+    cout << "Backward traversal: [";
+    table.rcall(PrintNode<typename HashTable<HashTableAscTraits<TX>>::Node>, cout);
+    cout << "]" << endl;
+    auto& firstEven = table.FirstThat([](auto& node) { return node.getValue() % 2 == 0; });
+    cout << "FirstThat (primer valor par): " << firstEven << endl;
+
+    cout << "Factor de carga: " << table.load_factor() << endl;
+
+    print_hash_table(table);
+
+    // Busqueda directa por clave (usa el hash, no recorre toda la tabla)
+    cout << "Buscar 70: " << table.search(70) << endl;
+    cout << "Remover 40: " << table.remove(40) << endl;
+    cout << "Buscar 40: " << (table.findNodePtr(40) ? "encontrado" : "no encontrado") << endl;
+
+    // push_back con una clave existente actualiza su referencia
+    table.push_back(15, 99);
+    cout << "Tras push_back(15,99): " << table << endl;
+
+    // ApplyFunction reconstruye los buckets porque cambian las claves
+    table.ApplyFunction(AddOne);
+    cout << "Tras aplicar AddOne: " << table << endl;
+
+    // Lectura y asignacion
+    HashTable<HashTableAscTraits<TX>> new_table;
+    ifstream in("hashtable.txt");
+    in >> new_table;
+    in.close();
+    cout << "Tabla leida desde archivo: " << new_table << endl;
+    table = new_table;
+    cout << "Tabla tras operator=: " << table << endl;
+
+    print_hash_table(table);
+}
