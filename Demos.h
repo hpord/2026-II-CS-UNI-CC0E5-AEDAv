@@ -11,5 +11,6 @@ void DemoHeap();
 void DemoBinaryTree();
 void DemoAVLTree();
 void DemoHashTable();
+void DemoPointersToFunctions();
 
 #endif // __DEMOS_H__
