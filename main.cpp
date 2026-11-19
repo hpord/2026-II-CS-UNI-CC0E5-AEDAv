@@ -15,6 +15,6 @@ int main() {
     DemoAVLTree();
     DemoHashTable();
     // DemoBinaryTree();
-    DemoPointersToFunctions();
+    //DemoPointersToFunctions();
     return 0;
 }
