@@ -10,6 +10,7 @@ void DemoLinkedList();
 void DemoHeap();
 void DemoBinaryTree();
 void DemoAVLTree();
+void DemoMerkleTree();
 void DemoHashTable();
 void DemoPointersToFunctions();
 

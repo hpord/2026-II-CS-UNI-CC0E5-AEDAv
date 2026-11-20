@@ -26,6 +26,7 @@ public:
     NodePtr m_pChild[2] = {nullptr, nullptr}; // left and right children
     NodePtr m_parent = nullptr;
     TX m_height = 0;
+    std::size_t m_hash = 0; // hash acumulado del subarbol (MerkleTree)
 };
 
 enum class TransversarOrder {
@@ -216,6 +217,7 @@ void BaseBinaryTree<Traits, Mixins...>::internal_insert(NodePtr& node, const val
     if (!node) {
         node = new Node(value, ref);
         node->m_parent = parent;
+        Redistribution(node);
         return;
     }
     auto branch = Compare()(node->getValue(), value);

@@ -13,6 +13,7 @@
 #include "containers/Heap.h"
 #include "containers/binarytree.h"
 #include "containers/AVLtree.h"
+#include "containers/merkletree.h"
 #include "containers/hashtable.h"
 #include "utilities/printcolored.h"
 #include "Demos.h"
@@ -440,6 +441,45 @@ void DemoAVLTree() {
     PrintColored(cout, "Pruebas para AVLTree", Color::Yellow);
     AVL_Tree<BinaryTreeAscTraits<TX>> avltree;
     TestBinaryTree(avltree, "binarytree.txt");
+}
+
+void DemoMerkleTree() {
+    cout << "\n";
+    PrintColored(cout, "Pruebas para MerkleTree", Color::Yellow);
+
+    MerkleTree<MerkleTreeAscTraits<TX>> tree;
+    InsertElements(tree, {{40, 6}, {20, 2}, {10, 1}, {25, 4}, {30, 5}, {22, 3}, {50, 7}});
+    cout << "Arbol: " << tree << endl;
+    print_tree(tree);
+
+    cout << "Hash raiz: " << hex << tree.rootHash() << dec << endl;
+    cout << "Hashes consistentes: " << (tree.verify() ? "si" : "no") << endl;
+
+    // La prueba de inclusion recompone la raiz usando los hashes hermanos.
+    auto proof = tree.getProof(30);
+    cout << "Prueba de 30: " << (tree.verifyProof(proof) ? "valida" : "invalida") << endl;
+
+    // Si se altera el valor, la prueba deja de recomponer el hash raiz.
+    auto tampered = proof;
+    tampered.value += 1;
+    cout << "Prueba alterada de 30: "
+         << (tree.verifyProof(tampered) ? "valida" : "invalida") << endl;
+
+    auto oldRoot = tree.rootHash();
+    tree.remove(30);
+    cout << "Tras remover 30: " << tree << endl;
+    cout << "Hash raiz cambio: " << (tree.rootHash() != oldRoot ? "si" : "no")
+         << " (nuevo hash " << hex << tree.rootHash() << dec << ")" << endl;
+    cout << "Hashes consistentes: " << (tree.verify() ? "si" : "no") << endl;
+
+    // ApplyFunction modifica los valores en sitio; el arbol recompone sus hashes.
+    tree.ApplyFunction(AddOne);
+    cout << "Tras aplicar AddOne: " << tree << endl;
+    cout << "Hashes consistentes: " << (tree.verify() ? "si" : "no") << endl;
+
+    MerkleTree<MerkleTreeAscTraits<TX>> copy = tree;
+    cout << "La copia conserva el hash raiz: "
+         << (copy.rootHash() == tree.rootHash() ? "si" : "no") << endl;
 }
 
 void DemoHashTable() {

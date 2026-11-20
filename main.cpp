@@ -13,6 +13,7 @@ int main() {
     // DemoHeap();
     DemoBinaryTree();
     DemoAVLTree();
+    DemoMerkleTree();
     DemoHashTable();
     // DemoBinaryTree();
     //DemoPointersToFunctions();
