@@ -5,35 +5,37 @@
 #include <vector>
 #include <map>
 #include "foreach.h"
-#include "containers/vector.h"
+/*#include "containers/vector.h"
 #include "containers/linkedlist.h"
 #include "containers/doublelinkedlist.h"
 #include "containers/circularlinkedlist.h"
 #include "containers/circulardoublelinkedlist.h"
-#include "containers/Heap.h"
+#include "containers/Heap.h"*/
 #include "containers/binarytree.h"
 #include "containers/AVLtree.h"
-#include "containers/merkletree.h"
-#include "containers/hashtable.h"
+/*#include "containers/merkletree.h"
+#include "containers/hashtable.h"*/
 #include "utilities/printcolored.h"
 #include "Demos.h"
 using namespace std;
 
-void AddOne(GeneralNode<TX> &node) {
+template <typename _Ref>
+void AddOne(GeneralNode<TX, _Ref> &node) {
     node.value() += 1;
 }
 
-template <typename T>
-void AddX(GeneralNode<T> &node, T x) {
+template <typename T, typename _Ref>
+void AddX(GeneralNode<T, _Ref> &node, T x) {
     node.value() += x;
 }
 
-void Square(GeneralNode<TX> &node) {
+template <typename _Ref>
+void Square(GeneralNode<TX, _Ref> &node) {
     node.value() *= node.value();
 }
 
-template <typename T>
-void ModX(GeneralNode<T> &node, T x) {
+template <typename T, typename _Ref>
+void ModX(GeneralNode<T, _Ref> &node, T x) {
     node.value() %= x;
 }
 
@@ -56,7 +58,7 @@ const TX NThreads = 5;
 // DemoRaceCondition(), que es donde se estudia esa problematica.
 template <typename Container>
 void InsertElements(Container &container,
-                     const vector<pair<typename Container::value_type, Ref>> &values) {
+                     const vector<pair<typename Container::value_type, typename Container::Ref>> &values) {
     for (const auto &v : values)
         container.push_back(v.first, v.second);
 }
@@ -128,7 +130,7 @@ void TestForwardTraversal(Container &container){
     }
 }
 
-void DemoVector() {
+/*void DemoVector() {
     PrintColored(cout, "Pruebas del contenedor Vector", Color::Yellow);
     // Dejamos los archivos vacios para que TestContainer acumule (append)
     // el estado del container tras cada paso
@@ -155,14 +157,14 @@ void TestCustomVector() {
 
 void DemoCustomContainer() {
     TestCustomVector();
-}
+}*/
 
 // Insertamos muchos elementos (generados en un loop, no a mano)
 // concurrentemente y comparamos cuantos deberian haber entrado contra
 // cuantos entraron realmente. Si push_back no estuviera sincronizado
 // (sin el mutex/lock_guard actual) esto perderia inserciones o crashearia;
 // con el mutex protegiendo push_back/resize, deberia dar siempre 0 perdidas.
-void DemoRaceCondition() {
+/*void DemoRaceCondition() {
     const size_t N = 200000;
 
     vector<pair<TX, Ref>> values(N);
@@ -200,9 +202,9 @@ void DemoRaceCondition() {
     else
         cout << "  No se perdio ningun elemento: el mutex de push_back/resize "
              << "sincroniza correctamente las inserciones concurrentes" << endl;
-}
+}*/
 
-template <typename Container>
+/*template <typename Container>
 void TestLinkedList(Container &list, const string &filename) {
     ofstream(filename, ios::trunc).close();
 
@@ -325,7 +327,7 @@ void DemoHeap() {
     PrintColored(cout, "Pruebas para MaxHeap", Color::Yellow);
     MaxHeap maxHeap;
     TestHeap(maxHeap);
-}
+}*/
 
 template <typename TreeContainer>
 void TestBinaryTree(TreeContainer &tree, const string &filename) {
@@ -344,9 +346,9 @@ void TestBinaryTree(TreeContainer &tree, const string &filename) {
     cout << endl;
 
     cout  << "Aumentar 11\n";
-    tree.ApplyFunction(AddOne);
+    tree.ApplyFunction(AddOne<TXX>);
     cout << "Arbol tras usar AddOne: " << tree << endl;
-    tree.ApplyFunction(AddX<TX>, TX(10));
+    tree.ApplyFunction(AddX<TX, TXX>, TX(10));
     cout << "Arbol tras usar AddX(10): " << tree << endl;
 
     print_tree(tree);
@@ -432,19 +434,19 @@ void TestBinaryTree(TreeContainer &tree, const string &filename) {
 void DemoBinaryTree() {
     cout << "\n";
     PrintColored(cout, "Pruebas para BinaryTree", Color::Yellow);
-    BinaryTree<BinaryTreeAscTraits<TX>> tree;
+    BinaryTree<BinaryTreeAscTraits<TX, TXX>> tree;
     TestBinaryTree(tree, "binarytree.txt");
 }
 
 void DemoAVLTree() {
     cout << "\n";
     PrintColored(cout, "Pruebas para AVLTree", Color::Yellow);
-    AVL_Tree<BinaryTreeAscTraits<TX>> avltree;
+    AVL_Tree<BinaryTreeAscTraits<TX, TXX>> avltree;
     TestBinaryTree(avltree, "binarytree.txt");
 }
 
 void DemoMerkleTree() {
-    cout << "\n";
+    /*cout << "\n";
     PrintColored(cout, "Pruebas para MerkleTree", Color::Yellow);
 
     MerkleTree<MerkleTreeAscTraits<TX>> tree;
@@ -479,11 +481,11 @@ void DemoMerkleTree() {
 
     MerkleTree<MerkleTreeAscTraits<TX>> copy = tree;
     cout << "La copia conserva el hash raiz: "
-         << (copy.rootHash() == tree.rootHash() ? "si" : "no") << endl;
+         << (copy.rootHash() == tree.rootHash() ? "si" : "no") << endl;*/
 }
 
 void DemoHashTable() {
-    cout << "\n";
+    /*cout << "\n";
     PrintColored(cout, "Pruebas para HashTable (buckets AVL)", Color::Yellow);
     ofstream("hashtable.txt", ios::trunc).close();
 
@@ -494,7 +496,7 @@ void DemoHashTable() {
 
     cout << "table[25] = " << table[25] << endl;
     table[25] = 44;
-    cout << "table[25] = " << table[25] << endl;
+    cout << "table[25] = " << table[25] << endl;*/
 /*
     // Capacidad pequena a proposito para que se vean las colisiones:
     // cada bucket es un AVL y guarda sus nodos ordenados.

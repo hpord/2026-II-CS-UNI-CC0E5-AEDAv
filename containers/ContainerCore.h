@@ -8,6 +8,7 @@ template <typename Traits>
 class ContainerCore {
 public:
     using value_type        = Traits::value_type;
+    using Ref               = Traits::Ref;
     using Node              = Traits::Node;
     using NodePtr           = Node*;
     using Delim             = Node::Delim;

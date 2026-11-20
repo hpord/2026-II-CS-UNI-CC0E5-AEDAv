@@ -3,7 +3,7 @@
 
 using TX = int;
 using TXX = long long;
-using Ref = long long;
+//using Ref = long long;
 
 // Crear el tipo CW como char si estamos en architectura de 16 bits
 // pero como wchar_t si estamos en 32 o 64 bits. Esto permite que el mismo

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Demos.h"
-#include "containers/vector.h"
+//#include "containers/vector.h"
 
 using namespace std;
 
@@ -13,8 +13,8 @@ int main() {
     // DemoHeap();
     DemoBinaryTree();
     DemoAVLTree();
-    DemoMerkleTree();
-    DemoHashTable();
+    /*DemoMerkleTree();
+        DemoHashTable();*/
     // DemoBinaryTree();
     //DemoPointersToFunctions();
     return 0;

@@ -3,8 +3,8 @@
 #include <iostream>
 #include "../types.h" // Ref
 
-template <typename T>
-struct GeneralNode{
+template <typename T, typename Ref>
+struct GeneralNode {
 private:
     T   m_value;
     Ref m_ref;      // Reference to the value
@@ -19,12 +19,12 @@ public:
 
     using Delim = std::istream::char_type;
 
-    friend std::ostream &operator <<(std::ostream &os, const GeneralNode<T> &node) {
+    friend std::ostream &operator <<(std::ostream &os, const GeneralNode<T, Ref> &node) {
         os << "(" << node.getValue() << "," << node.getRef() << ")";
         return os;
     }
 
-    friend std::istream &operator >>(std::istream &is, GeneralNode<T> &node){
+    friend std::istream &operator >>(std::istream &is, GeneralNode<T, Ref> &node){
         Delim d;
         is >> d >> node.m_value >> d >> node.m_ref >> d;
         return is;

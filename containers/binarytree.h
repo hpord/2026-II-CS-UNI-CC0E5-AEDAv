@@ -13,14 +13,15 @@
 #include <sstream>
 #include <algorithm>
 
-template <typename T>
-class BinaryTreeNode : public GeneralNode<T> {
+template <typename T, typename _Ref>
+class BinaryTreeNode : public GeneralNode<T, _Ref> {
 public:
     using value_type        = T;
-    using MySelf            = BinaryTreeNode<T>;
+    using Ref               = _Ref;
+    using MySelf            = BinaryTreeNode<T, Ref>;
     using Node              = MySelf;
     using NodePtr           = Node*;
-    using Parent            = GeneralNode<T>;
+    using Parent            = GeneralNode<T, Ref>;
     using Parent::Parent; // Inherit constructor
 
     NodePtr m_pChild[2] = {nullptr, nullptr}; // left and right children
@@ -35,11 +36,11 @@ enum class TransversarOrder {
     PostOrder
 };
 
-template <typename T, TX Dir>
-class BinaryTreeIterator : public GeneralIterator<BinaryTreeIterator<T, Dir>, BinaryTreeNode<T>> {
+template <typename T, typename _Ref, TX Dir>
+class BinaryTreeIterator : public GeneralIterator<BinaryTreeIterator<T, _Ref, Dir>, BinaryTreeNode<T, _Ref>> {
 public:
-    using Node = BinaryTreeNode<T>;
-    using MySelf = BinaryTreeIterator<T, Dir>;
+    using Node = BinaryTreeNode<T, _Ref>;
+    using MySelf = BinaryTreeIterator<T, _Ref, Dir>;
     using Parent = GeneralIterator<MySelf, Node>;
     using NodePtr = Node*;
     //using Parent::Parent;
@@ -52,8 +53,8 @@ public:
     MySelf& operator++();
 };
 
-template <typename T, TX Dir>
-auto BinaryTreeIterator<T, Dir>::operator++() -> MySelf& {
+template <typename T, typename _Ref, TX Dir>
+auto BinaryTreeIterator<T,_Ref, Dir>::operator++() -> MySelf& {
     auto node = Parent::m_ptr;
     if (node == nullptr)
         return *this;
@@ -113,25 +114,25 @@ auto BinaryTreeIterator<T, Dir>::operator++() -> MySelf& {
     }
 }
 
-template <typename T>
-using BinaryTreeForwardIterator = BinaryTreeIterator<T, 0>;
+template <typename T, typename _Ref>
+using BinaryTreeForwardIterator = BinaryTreeIterator<T, _Ref, 0>;
 
-template <typename T>
-using BinaryTreeBackwardIterator = BinaryTreeIterator<T, 1>;
+template <typename T, typename _Ref>
+using BinaryTreeBackwardIterator = BinaryTreeIterator<T, _Ref, 1>;
 
-template <typename T>
+template <typename T, typename _Ref>
 struct BinaryTreeTraits {
-    using Node              = BinaryTreeNode<T>;
-    using ForwardIterator   = BinaryTreeForwardIterator<T>;
-    using BackwardIterator  = BinaryTreeBackwardIterator<T>;
+    using Node              = BinaryTreeNode<T, _Ref>;
+    using ForwardIterator   = BinaryTreeForwardIterator<T, _Ref>;
+    using BackwardIterator  = BinaryTreeBackwardIterator<T, _Ref>;
     using Order             = TransversarOrder;
 };
 
-template <typename T>
-struct BinaryTreeAscTraits : public AscendingTraits<T>, public BinaryTreeTraits<T> {};
+template <typename T, typename _Ref>
+struct BinaryTreeAscTraits : public AscendingTraits<T, _Ref>, public BinaryTreeTraits<T, _Ref> {};
 
-template <typename T>
-struct BinaryTreeDescTraits : public DescendingTraits<T>, public BinaryTreeTraits<T> {};
+template <typename T, typename _Ref>
+struct BinaryTreeDescTraits : public DescendingTraits<T, _Ref>, public BinaryTreeTraits<T, _Ref> {};
 
 template <typename Traits, template <typename> typename... Mixins>
 class BaseBinaryTree;
@@ -148,6 +149,7 @@ public:
     using MySelf = BaseBinaryTree;
     using Parent = GeneralContainer<Traits, Mixins...>;
     using typename Parent::value_type;
+    using typename Parent::Ref;
     using typename Parent::Node;
     using typename Parent::NodePtr;
     //using typename Parent::ForwardIterator;
@@ -365,20 +367,20 @@ public:
 };
 
 // --- FUNCIONES AUXILIARES EXTERNAS ---
-template <typename T>
-TX tree_get_width(BinaryTreeNode<T>* node) {
+template <typename T, typename _Ref>
+TX tree_get_width(BinaryTreeNode<T, _Ref>* node) {
     if (!node) return 0;
     return 1 + tree_get_width(node->m_pChild[0]) + tree_get_width(node->m_pChild[1]);
 }
 
-template <typename T>
-TX tree_get_max_depth(BinaryTreeNode<T>* node) {
+template <typename T, typename _Ref>
+TX tree_get_max_depth(BinaryTreeNode<T, _Ref>* node) {
     if (!node) return 0;
     return 1 + std::max(tree_get_max_depth(node->m_pChild[0]), tree_get_max_depth(node->m_pChild[1]));
 }
 
-template <typename T>
-void tree_draw_orthogonal(BinaryTreeNode<T>* node, TX x, TX y, std::vector<std::string>& canvas) {
+template <typename T, typename _Ref>
+void tree_draw_orthogonal(BinaryTreeNode<T, _Ref>* node, TX x, TX y, std::vector<std::string>& canvas) {
     if (!node) return;
 
     TX left_w = tree_get_width(node->m_pChild[0]);

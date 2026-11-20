@@ -2,17 +2,18 @@
 #define __GENERAL_CONTAINER_H__
 #include "ContainerCore.h"
 
-template <typename T, typename _Compare>
+template <typename T, typename _Ref, typename _Compare>
 struct DefaultTraits {
     using value_type    = T;
+    using Ref           = _Ref;
     using Compare       = _Compare;
 };
 
-template <typename T, typename _Compare = std::less<T>>
-using AscendingTraits = DefaultTraits<T, _Compare>;
+template <typename T, typename _Ref, typename _Compare = std::less<T>>
+using AscendingTraits = DefaultTraits<T, _Ref, _Compare>;
 
-template <typename T, typename _Compare = std::greater<T>>
-using DescendingTraits = DefaultTraits<T, _Compare>;
+template <typename T, typename _Ref, typename _Compare = std::greater<T>>
+using DescendingTraits = DefaultTraits<T, _Ref, _Compare>;
 
 template <template <typename> typename T, typename Traits>
 concept IsContainerCore = std::derived_from<T<Traits>, ContainerCore<Traits>>;
@@ -25,6 +26,7 @@ class GeneralContainer :
 public:
     using Core = ContainerCore<Traits>;
     using typename Core::value_type;
+    using typename Core::Ref;
     using typename Core::Node;
     using typename Core::Delim;
     using typename Core::ForwardIterator;
